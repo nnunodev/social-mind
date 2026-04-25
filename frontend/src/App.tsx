@@ -1,9 +1,20 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Layout from './components/Layout'
+import Dashboard from './pages/Dashboard'
+import Hooks from './pages/Hooks'
+import Calendar from './pages/Calendar'
+
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <h1 className="text-3xl font-bold text-primary-600 p-8">
-        Social Mind
-      </h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="hooks" element={<Hooks />} />
+          <Route path="calendar" element={<Calendar />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
