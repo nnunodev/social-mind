@@ -7,8 +7,7 @@ services:
       dockerfile: ../docker/backend.Dockerfile
     container_name: social-mind-backend
     restart: unless-stopped
-    ports:
-      - "8010:8000"
+    network_mode: host
     volumes:
       - ./data:/app/data
       - ./uploads:/app/uploads
@@ -16,9 +15,14 @@ services:
       - DATABASE_URL=sqlite+aiosqlite:///./data/social_mind.db
       - UPLOAD_DIR=/app/uploads
       - MAX_UPLOAD_SIZE=10485760
-      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
-    networks:
-      - social-mind
+      - SECRET_KEY=${SECRET_KEY}
+      - CORS_ORIGINS=["https://social.voidnode.dev","http://localhost:3000"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   frontend:
     build:
@@ -26,13 +30,12 @@ services:
       dockerfile: ../docker/frontend.Dockerfile
     container_name: social-mind-frontend
     restart: unless-stopped
-    ports:
-      - "3010:80"
+    network_mode: host
     depends_on:
       - backend
-    networks:
-      - social-mind
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
 
 networks:
-  social-mind:
+  default:
     driver: bridge
