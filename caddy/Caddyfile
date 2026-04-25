@@ -1,0 +1,14 @@
+social.voidnode.dev {
+    reverse_proxy /api/* backend:8000
+    reverse_proxy frontend:80
+
+    # Enable compression
+    encode gzip
+
+    # Headers for security
+    header {
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+        X-XSS-Protection "1; mode=block"
+    }
+}

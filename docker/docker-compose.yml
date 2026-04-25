@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/backend.Dockerfile
+    container_name: social-mind-backend
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./data/social_mind.db
+      - UPLOAD_DIR=/app/uploads
+      - MAX_UPLOAD_SIZE=10485760
+      - SECRET_KEY=${SECRET_KEY:-changeme-in-production}
+    networks:
+      - social-mind
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    container_name: social-mind-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - social-mind
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: social-mind-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - social-mind
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  social-mind:
+    driver: bridge
