@@ -140,25 +140,35 @@ export default function Dashboard() {
       {growthData.length > 0 && (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           {/* Growth Chart */}
-          <div className="card">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Growth Over Time</h3>
-            <ResponsiveContainer width="100%" height={300}>
+          <div className="card" role="region" aria-label="Growth over time chart">
+            <h3 id="growth-chart-title" className="text-lg font-medium text-gray-900 mb-4">
+              Growth Over Time
+            </h3>
+            <div className="sr-only">
+              Line chart showing views and likes over time
+            </div>
+            <ResponsiveContainer width="100%" height={300} aria-hidden="true">
               <LineChart data={growthData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="views" stroke="#0ea5e9" />
-                <Line type="monotone" dataKey="likes" stroke="#ef4444" />
+                <Line type="monotone" dataKey="views" stroke="#0ea5e9" name="Views" />
+                <Line type="monotone" dataKey="likes" stroke="#ef4444" name="Likes" />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
           {/* Engagement Chart */}
-          <div className="card">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Engagement Breakdown</h3>
-            <ResponsiveContainer width="100%" height={300}>
+          <div className="card" role="region" aria-label="Engagement breakdown chart">
+            <h3 id="engagement-chart-title" className="text-lg font-medium text-gray-900 mb-4">
+              Engagement Breakdown
+            </h3>
+            <div className="sr-only">
+              Bar chart showing total likes, comments, and shares
+            </div>
+            <ResponsiveContainer width="100%" height={300} aria-hidden="true">
               <BarChart
                 data={[
                   { name: 'Likes', value: summary?.total_likes || 0 },

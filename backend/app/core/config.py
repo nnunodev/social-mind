@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import List
+import secrets
 
 
 class Settings(BaseSettings):
@@ -16,8 +17,8 @@ class Settings(BaseSettings):
         "https://social.voidnode.dev",
     ]
     
-    # Security
-    SECRET_KEY: str = "change-me-in-production"
+    # Security - Generate secret if not set (for dev), MUST be set in production
+    SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     
     # File uploads

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dateutil.relativedelta import relativedelta
 
 from app.core.database import get_db
@@ -12,6 +12,10 @@ from app.schemas import (
 )
 
 router = APIRouter(prefix="/calendar", tags=["calendar"])
+
+# Helper function for current UTC time
+def now_utc():
+    return datetime.now(timezone.utc)
 
 
 @router.post("/", response_model=CalendarItemResponse)
@@ -57,7 +61,7 @@ async def get_calendar_items(
     
     # Default to next 30 days if no dates provided
     if not start_date:
-        start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        start_date = now_utc().replace(hour=0, minute=0, second=0, microsecond=0)
     if not end_date:
         end_date = start_date + timedelta(days=30)
     
